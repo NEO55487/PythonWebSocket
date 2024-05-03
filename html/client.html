@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocker Client</title>
+</head>
+<body>
+    <button onMouseDown="NumUp()" onMouseUp="NumDown()">Number Up</button>
+    <input onchange="checkValue()" type="checkbox" id="test1" name="test1">
+    <label for="test1"> CheckBox</label><br>
+
+    <p id="count">0</p>
+</body>
+<script>
+    const socket = new WebSocket('ws://localhost:8080');
+
+    var i = 0;
+    var bool = false;
+
+    function countUp(){
+        i++;
+        document.getElementById("count").innerHTML = i;
+    }
+    function countDown(){
+        i--;
+        document.getElementById("count").innerHTML = i;
+    }
+
+    const NumUp = () => {
+        countUp();
+    }
+    const NumDown = () => {
+        countDown();
+    }
+
+    function checkValue() {
+        if(bool===false){
+            bool=true;
+        } else{
+            bool=false;
+        }
+
+    }
+
+    const checkBoxVehicle = document.getElementById("test1").value;
+
+    socket.addEventListener('open', function (event) {
+        socket.send('Connection Established');
+    });
+
+
+    socket.addEventListener('message', function (event) {
+        console.log(event.data);
+        var JSON = "bouton: "+i+", CheckBox: "+bool;
+        socket.send(JSON);
+    });
+
+</script>
+</html>
